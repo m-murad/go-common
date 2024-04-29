@@ -28,6 +28,7 @@ func NewClient(httpCli *http.Client, metrics metrics.Service, serviceName string
 
 func (c *Client) Do(req *http.Request) (*http.Response, error) {
 	rsp, err := c.cli.Do(req)
-	c.metrics.Incr("http_request", 1, []string{"status:" + rsp.Status, "method:" + req.Method, "path:" + req.URL.Path})
+	c.metrics.Incr("http_request", 1, append([]string{"status:" + rsp.Status, "method:" + req.Method, "path:" + req.URL.Path}, c.tags...))
+	c.metrics.Timing("http_request", 1, append([]string{"status:" + rsp.Status, "method:" + req.Method, "path:" + req.URL.Path}, c.tags...))
 	return rsp, err
 }
